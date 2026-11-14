@@ -97,6 +97,27 @@ module.exports = (db) => {
     }
   });
 
+  // POST /bookings/:bookingId/return  -> 200, frees one place for the guest
+  // 404 unknown booking | 409 "Already returned"
+  router.post('/:bookingId/return', async (req, res) => {
+    const { bookingId } = req.params;
+    if (!isValidId(bookingId)) return sendError(res, 400, 'bookingId must be a positive whole number');
+    try {
+      const result = await db.run(
+        'UPDATE bookings SET returned_at = ? WHERE id = ? AND returned_at IS NULL;',
+        [now(), bookingId]
+      );
+      if (result.changes === 0) {
+        const exists = await db.get('SELECT id FROM bookings WHERE id = ?;', [bookingId]);
+        return exists ? sendError(res, 409, 'Already returned') : sendError(res, 404, 'Booking Not Found');
+      }
+      const booking = await db.get(`${BOOKING_JOIN} WHERE bookings.id = ?;`, [bookingId]);
+      res.status(200).json({ message: 'Game Returned Successfully', booking });
+    } catch (error) {
+      sendError(res, 500, 'Internal Server Error');
+    }
+  });
+
   // DELETE /bookings/:bookingId/  -> 200
   router.delete('/:bookingId', async (req, res) => {
     const { bookingId } = req.params;
