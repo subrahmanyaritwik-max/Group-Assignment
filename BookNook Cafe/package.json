@@ -1,0 +1,22 @@
+{
+  "name": "booknook",
+  "version": "1.0.0",
+  "description": "BookNook Cafe: board game booking API (Express and SQLite)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "seed": "node seed.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["nodejs", "express", "sqlite", "rest", "boardgames"],
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.3.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "5.1.7"
+  },
+  "devDependencies": { "nodemon": "^3.1.14" }
+}
